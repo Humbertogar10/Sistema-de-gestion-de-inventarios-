@@ -2,8 +2,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Gestion_de_inventarios {
-    private static final String ARCHIVO_INVENTARIO = "gestioninventario.csv";
+public class Gestion_de_inventario {
+    private static final String ARCHIVO_INVENTARIO = "inventario.csv";
     private static ArrayList<Producto> inventario = new ArrayList<>();
     private static ArrayList<Venta> ventas = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
@@ -149,5 +149,79 @@ public class Gestion_de_inventarios {
             }
         }
     }
+
+    // Función para cargar el inventario desde un archivo CSV
+    private static void cargarInventarioDesdeArchivo() {
+        try (BufferedReader br = new BufferedReader(new FileReader(ARCHIVO_INVENTARIO))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                String codigo = datos[0];
+                String nombre = datos[1];
+                int cantidad = Integer.parseInt(datos[2]);
+                inventario.add(new Producto(codigo, nombre, cantidad));
+            }
+        } catch (IOException e) {
+            System.out.println("Error al cargar el inventario desde el archivo.");
+        }
+    }
+
+    // Función para guardar el inventario en un archivo CSV
+    private static void guardarInventarioEnArchivo() {
+        try (FileWriter writer = new FileWriter(ARCHIVO_INVENTARIO)) {
+            for (Producto producto : inventario) {
+                writer.write(producto.getCodigo() + "," + producto.getNombre() + "," + producto.getCantidad() + "\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error al guardar el inventario en el archivo.");
+        }
+    }
 }
 
+// Clase Producto para almacenar la información de cada producto
+class Producto {
+    private String codigo;
+    private String nombre;
+    private int cantidad;
+
+    public Producto(String codigo, String nombre, int cantidad) {
+        this.codigo = codigo;
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void reducirCantidad(int cantidadVendida) {
+        this.cantidad -= cantidadVendida;
+    }
+}
+
+// Clase Venta para almacenar la información de cada venta
+class Venta {
+    private String producto;
+    private int cantidad;
+
+    public Venta(String producto, int cantidad) {
+        this.producto = producto;
+        this.cantidad = cantidad;
+    }
+
+    public String getProducto() {
+        return producto;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+}
